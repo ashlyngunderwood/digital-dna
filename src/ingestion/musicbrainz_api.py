@@ -1,10 +1,14 @@
 import time
 import requests
 
+
 BASE_URL = "https://musicbrainz.org/ws/2/recording/"
 
 HEADERS = {
-	"User-Agent": "DigitalDNA/1.0 (personal data analytics project)"
+    "User-Agent": (
+        "DigitalDNA/1.0 "
+        "(https://github.com/ashlyngunderwood/digital-dna)"
+    )
 }
 
 
@@ -34,7 +38,10 @@ def get_with_retry(url, params, headers, retries=3, wait_seconds=3):
 
         time.sleep(wait_seconds)
 
-    raise RuntimeError("MusicBrainz request failed after all retry attempts.")
+    raise RuntimeError(
+        "MusicBrainz request failed after all retry attempts."
+    )
+
 
 def search_recording(title, artist, limit=20):
     params = {
@@ -42,6 +49,8 @@ def search_recording(title, artist, limit=20):
         "fmt": "json",
         "limit": limit
     }
+
+    time.sleep(1)
 
     response = get_with_retry(
         BASE_URL,
@@ -52,3 +61,25 @@ def search_recording(title, artist, limit=20):
     response.raise_for_status()
 
     return response.json()
+
+
+def search_multiple_recordings(tracks, limit=20):
+    results = []
+
+    for track in tracks:
+        title = track["title"]
+        artist = track["artist"]
+
+        api_data = search_recording(
+            title=title,
+            artist=artist,
+            limit=limit
+        )
+
+        results.append({
+            "requested_title": title,
+            "requested_artist": artist,
+            "api_response": api_data
+        })
+
+    return results
