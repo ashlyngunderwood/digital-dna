@@ -70,16 +70,30 @@ def search_multiple_recordings(tracks, limit=20):
         title = track["title"]
         artist = track["artist"]
 
-        api_data = search_recording(
-            title=title,
-            artist=artist,
-            limit=limit
-        )
+        try:
+            api_data = search_recording(
+                title=title,
+                artist=artist,
+                limit=limit
+            )
 
-        results.append({
-            "requested_title": title,
-            "requested_artist": artist,
-            "api_response": api_data
-        })
+            results.append({
+                "requested_title": title,
+                "requested_artist": artist,
+                "status": "success",
+                "error_type": None,
+                "error_message": None,
+                "api_response": api_data
+            })
+
+        except Exception as error:
+            results.append({
+                "requested_title": title,
+                "requested_artist": artist,
+                "status": "failed",
+                "error_type": type(error).__name__,
+                "error_message": str(error),
+                "api_response": None
+            })
 
     return results
