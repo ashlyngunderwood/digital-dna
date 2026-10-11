@@ -25,7 +25,11 @@ def recordings_to_dataframe(api_data):
 
     return pd.DataFrame(rows)
 
-def process_recording_matches(api_data, requested_title):
+def process_recording_matches(
+    api_data,
+    requested_title,
+    requested_artist
+):
     recordings_df = recordings_to_dataframe(api_data)
 
     if recordings_df.empty:
@@ -33,7 +37,8 @@ def process_recording_matches(api_data, requested_title):
 
     best_match = select_best_match(
         recordings_df,
-        requested_title
+        requested_title,
+        requested_artist
     )
 
     return best_match
